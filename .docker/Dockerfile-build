@@ -19,23 +19,26 @@ RUN go build -tags sqlite,json1 -o /usr/bin/hydra
 
 FROM alpine:3.15
 
-ARG USER_ID=10001
-ARG USER_GROUP_ID=10001
+#ARG USER_ID=10001
+#ARG USER_GROUP_ID=10001
 
 #RUN addgroup -S ory; \
 #    adduser -S ory -G ory -D  -h /home/ory -s /bin/nologin; \
 #    chown -R ory:ory /home/ory
 
-RUN addgroup -g ${USER_GROUP_ID} -S ory; \
-    adduser -u ${USER_ID} -S ory -G ory -D  -h /home/ory -s /bin/nologin; \
-    chown -R ory:ory /home/ory
+#RUN addgroup -g ${USER_GROUP_ID} -S ory; \
+#    adduser -u ${USER_ID} -S ory -G ory -D  -h /home/ory -s /bin/nologin; \
+#    chown -R ory:ory /home/ory
 
 COPY --from=builder /usr/bin/hydra /usr/bin/hydra
 
 # By creating the sqlite folder as the ory user, the mounted volume will be owned by ory:ory, which
 # is required for read/write of SQLite.
-RUN mkdir -p /var/lib/sqlite && \
-    chown ory:ory /var/lib/sqlite
+
+#RUN mkdir -p /var/lib/sqlite && \
+#    chown ory:ory /var/lib/sqlite
+
+RUN mkdir -p /var/lib/sqlite
 
 VOLUME /var/lib/sqlite
 
@@ -46,7 +49,7 @@ VOLUME /home/ory
 EXPOSE 4444 4445
 
 #USER ory
-USER ${USER_ID}
+#USER ${USER_ID}
 
 ENTRYPOINT ["hydra"]
 CMD ["serve", "all"]
